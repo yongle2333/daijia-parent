@@ -48,6 +48,9 @@
         <!-- https://seata.io/zh-cn/docs/overview/what-is-seata.html -->
         <seata.version>1.7.1</seata.version>
         <drools.version>8.41.0.Final</drools.version>
+
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <!--配置dependencyManagement锁定依赖的版本-->
@@ -193,6 +196,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+<!--                刚添加的-->
+                <version>3.10.1</version>
+                <configuration>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
