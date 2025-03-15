@@ -8,6 +8,8 @@ import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,5 +61,19 @@ public class DriverServiceImpl implements DriverService {
         //根据id远程调用获取司机登录信息
         Result<DriverLoginVo> loginVoResult = driverInfoFeignClient.getDriverLoginInfo(driverId);
         return loginVoResult.getData();
+    }
+
+    //获取司机认证信息
+    @Override
+    public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
+        Result<DriverAuthInfoVo> authInfoVoResult = driverInfoFeignClient.getDriverAuthInfo(driverId);
+        return authInfoVoResult.getData();
+    }
+
+    //更新司机认证信息
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        Result<Boolean> booleanResult = driverInfoFeignClient.updateDriverAuthInfo(updateDriverAuthInfoForm);
+        return booleanResult.getData();
     }
 }

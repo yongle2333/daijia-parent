@@ -13,6 +13,7 @@ public enum ResultCodeEnum {
     FAIL(201, "失败"),
     SERVICE_ERROR(2012, "服务异常"),
     DATA_ERROR(204, "数据异常"),
+    DRIVER_LICENSE_DATA_ERROR(667,"行驶证认证失败"),
     ILLEGAL_REQUEST(205, "非法请求"),
     REPEAT_SUBMIT(206, "重复提交"),
     FEIGN_FAIL(207, "远程调用失败"),
@@ -39,6 +40,7 @@ public enum ResultCodeEnum {
     DRIVER_START_LOCATION_DISTION_ERROR( 217, "距离代驾起始点1公里以内才能确认"),
     DRIVER_END_LOCATION_DISTION_ERROR( 217, "距离代驾终点2公里以内才能确认"),
     IMAGE_AUDITION_FAIL( 217, "图片审核不通过"),
+    IDCARD_DATA_ERROR(666,"身份证认证失败"),
     AUTH_ERROR( 217, "认证通过后才可以开启代驾服务"),
     FACE_ERROR( 250, "当日未进行人脸识别"),
 
