@@ -2,10 +2,10 @@ package com.atguigu.daijia.driver.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.driver.config.TencentCloudProperties;
 import com.atguigu.daijia.driver.mapper.DriverAccountMapper;
 import com.atguigu.daijia.driver.mapper.DriverInfoMapper;
 import com.atguigu.daijia.driver.mapper.DriverLoginLogMapper;
@@ -16,18 +16,26 @@ import com.atguigu.daijia.model.entity.driver.DriverAccount;
 import com.atguigu.daijia.model.entity.driver.DriverInfo;
 import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tencentcloudapi.common.AbstractModel;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.iai.v20200303.IaiClient;
+import com.tencentcloudapi.iai.v20200303.models.CreatePersonRequest;
+import com.tencentcloudapi.iai.v20200303.models.CreatePersonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
+
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -44,6 +52,7 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
     private final DriverAccountMapper driverAccountMapper;
     private final DriverLoginLogMapper driverLoginLogMapper;
     private final CosService cosService;
+    private final TencentCloudProperties tencentCloudProperties;
 
     //微信小程序授权登录
     @Override
@@ -142,6 +151,57 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         // 一、driverInfoMapper.updateById(driverInfo);
         // 二、boolean update = this.updateById(driverInfo);
         return this.updateById(driverInfo);
+    }
+
+
+    //创建司机人脸模型
+    @Override
+    public boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm) {
+        //根据司机id查询司机基本信息
+        DriverInfo driverInfo = driverInfoMapper.selectById(driverFaceModelForm.getDriverId());
+
+        try{
+
+            Credential cred = new Credential(tencentCloudProperties.getSecretId(),
+                                             tencentCloudProperties.getSecretKey());
+            // 实例化一个http选项，可选的，没有特殊需求可以跳过
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setEndpoint("iai.tencentcloudapi.com");
+            // 实例化一个client选项，可选的，没有特殊需求可以跳过
+            ClientProfile clientProfile = new ClientProfile();
+            clientProfile.setHttpProfile(httpProfile);
+            // 实例化要请求产品的client对象,clientProfile是可选的
+            IaiClient client = new IaiClient(cred, tencentCloudProperties.getRegion(), clientProfile);
+            // 实例化一个请求对象,每个接口都会对应一个request对象
+            CreatePersonRequest req = new CreatePersonRequest();
+
+            //****用java代码实现******(还有控制台实现)
+            //设置相关值(人员库ID)
+            req.setGroupId(tencentCloudProperties.getPersonGroupId());
+            //设置基本值
+            req.setPersonId(String.valueOf(driverInfo.getId()));
+            req.setGender(Long.parseLong(driverInfo.getGender()));
+            req.setQualityControl(4L);
+            req.setUniquePersonControl(4L);
+            req.setPersonName(driverInfo.getName());
+            req.setImage(driverFaceModelForm.getImageBase64());
+
+            // 返回的resp是一个CreatePersonResponse的实例，与请求对象对应
+            CreatePersonResponse resp = client.CreatePerson(req);
+            // 输出json格式的字符串回包
+            System.out.println(AbstractModel.toJsonString(resp));
+
+            String faceId = resp.getFaceId();
+            if(StringUtils.hasText(faceId)){
+                driverInfo.setFaceModelId(faceId);
+                driverInfoMapper.updateById(driverInfo);
+            }
+
+        } catch (TencentCloudSDKException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
 
