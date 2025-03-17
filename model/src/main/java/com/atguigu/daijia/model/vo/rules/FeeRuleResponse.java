@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * 输出对象
+ */
 @Data
 public class FeeRuleResponse {
 
