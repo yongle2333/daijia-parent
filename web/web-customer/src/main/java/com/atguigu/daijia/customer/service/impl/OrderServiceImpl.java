@@ -4,11 +4,14 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.customer.service.OrderService;
 import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
+import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.rules.FeeRuleResponseVo;
+import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import com.atguigu.daijia.rules.client.FeeRuleFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final MapFeignClient mapFeignClient;
     private final FeeRuleFeignClient feeRuleFeignClient;
+    private final OrderInfoFeignClient orderInfoFeignClient;
 
     //预估订单数据
     @Override
@@ -52,6 +56,41 @@ public class OrderServiceImpl implements OrderService {
         expectOrderVo.setFeeRuleResponseVo(feeRuleResponseVo);
 
         return expectOrderVo;
+    }
+
+
+    //乘客下单(保存订单数据)
+    @Override
+    public Long submitOrder(SubmitOrderForm submitOrderForm) {
+        //1.重新计算驾驶路线
+        CalculateDrivingLineForm calculateDrivingLineForm = new CalculateDrivingLineForm();
+        BeanUtils.copyProperties(submitOrderForm,calculateDrivingLineForm);
+        Result<DrivingLineVo> drivingLineVoResult = mapFeignClient.calculateDrivingLine(calculateDrivingLineForm);
+        DrivingLineVo drivingLineVo = drivingLineVoResult.getData();
+
+        //重新计算订单费用
+        FeeRuleRequestForm feeRuleRequestForm = new FeeRuleRequestForm();
+        feeRuleRequestForm.setDistance(drivingLineVo.getDistance());
+        feeRuleRequestForm.setStartTime(new Date());
+        feeRuleRequestForm.setWaitMinute(0);
+        Result<FeeRuleResponseVo> feeRuleResponseVoResult = feeRuleFeignClient.calculateOrderFee(feeRuleRequestForm);
+        FeeRuleResponseVo feeRuleResponseVo = feeRuleResponseVoResult.getData();
+
+        //封装数据
+        OrderInfoForm orderInfoForm = new OrderInfoForm();
+        BeanUtils.copyProperties(submitOrderForm,orderInfoForm);
+        //实际路程
+        orderInfoForm.setExpectDistance(drivingLineVo.getDistance());
+        //实际费用
+        orderInfoForm.setExpectAmount(feeRuleResponseVo.getTotalAmount());
+
+        Result<Long> orderInfoResult = orderInfoFeignClient.saveOrderInfo(orderInfoForm);
+        Long orderId = orderInfoResult.getData();
+
+
+        //TODO 查询附近可以接单的司机
+
+        return orderId;
     }
 }
 
