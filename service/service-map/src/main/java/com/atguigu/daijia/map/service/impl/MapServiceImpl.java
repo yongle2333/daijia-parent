@@ -40,14 +40,14 @@ public class MapServiceImpl implements MapService {
         //开始位置
         map.put("from",calculateDrivingLineForm.getStartPointLatitude()+","+calculateDrivingLineForm.getStartPointLongitude());
         //结束位置
-        map.put("to",calculateDrivingLineForm.getEndPointLatitude()+","+calculateDrivingLineForm.getEndPointLatitude());
+        map.put("to",calculateDrivingLineForm.getEndPointLatitude()+","+calculateDrivingLineForm.getEndPointLongitude());
         map.put("key",key);
 
         //使用RestTemplate调用GET
         JSONObject result = restTemplate.getForObject(url, JSONObject.class, map);
         //处理返回结果
         //判断是否调用成功
-        int status = result.getIntValue("status");
+        int status = result.getIntValue("status");  //调用getIntValue可能会产生空指针的异常
         if(status != 0){
             throw new GuiguException(ResultCodeEnum.MAP_FAIL);
         }
@@ -60,7 +60,7 @@ public class MapServiceImpl implements MapService {
         drivingLineVo.setDuration(route.getBigDecimal("duration"));
         //距离 向上取整，保留两位小数
         drivingLineVo.setDistance(route.getBigDecimal("distance")
-                .divideToIntegralValue(new BigDecimal(1000))
+                .divide(new BigDecimal(1000))   //**************
                 .setScale(2, RoundingMode.HALF_UP));
         //路线
         drivingLineVo.setPolyline(route.getJSONArray("polyline"));
@@ -68,3 +68,17 @@ public class MapServiceImpl implements MapService {
         return drivingLineVo;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

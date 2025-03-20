@@ -177,3 +177,16 @@ rule "计算总金额"
         feeRuleResponse.setTotalAmount(totalAmount);
         System.out.println("计算总金额:" + feeRuleResponse.getTotalAmount() + "元");
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
