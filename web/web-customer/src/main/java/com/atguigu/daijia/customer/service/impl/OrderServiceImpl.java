@@ -92,6 +92,16 @@ public class OrderServiceImpl implements OrderService {
 
         return orderId;
     }
+
+
+
+    //查询订单状态
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+
+        Result<Integer> orderStatusResult = orderInfoFeignClient.getOrderStatus(orderId);
+        return orderStatusResult.getData();
+    }
 }
 
 

@@ -3,6 +3,8 @@ package com.atguigu.daijia.order.client;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -14,5 +16,10 @@ public interface OrderInfoFeignClient {
     //保存订单数据
     @PostMapping("/order/info/saveOrderInfo")
     Result<Long> saveOrderInfo(@RequestBody OrderInfoForm orderInfoForm);
+
+
+    //根据订单id查询订单状态
+    @GetMapping("/order/info/getOrderStatus/{orderId}")
+    Result<Integer> getOrderStatus(@PathVariable Long orderId);
 
 }

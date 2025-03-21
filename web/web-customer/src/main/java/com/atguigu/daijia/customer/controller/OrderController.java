@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.message.ReusableMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class OrderController {
     }
 
 
-    @Operation(summary = "保存订单数据")
+    @Operation(summary = "保存订单数据(乘客下单)")
     @GuiguLogin
     @PostMapping("/submitOrder")
     public Result<Long> submitOrder(@RequestBody SubmitOrderForm submitOrderForm){
@@ -56,6 +57,19 @@ public class OrderController {
         return Result.ok(orderService.submitOrder(submitOrderForm));
 
     }
+
+
+
+    @Operation(summary = "查询订单状态")
+    @GuiguLogin
+    @GetMapping("/getOrderStatus")
+    public Result<Integer> getOrderStatus(@PathVariable Long orderId){
+
+        return Result.ok(orderService.getOrderStatus(orderId));
+    }
+
+
+
 
 }
 

@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
 import com.atguigu.daijia.order.service.OrderInfoService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -56,5 +57,21 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderStatusLog.setOrderStatus(status);
         orderStatusLog.setOperateTime(new Date());
         orderStatusLogMapper.insert(orderStatusLog);
+    }
+
+
+
+    //根据订单id查询订单状态
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+
+        //可以这样来查询new LambdaQueryWrapper<>()，
+        //也可以直接selectById(),只不过这样的全表查询索引失效影响性能
+        OrderInfo orderInfo = orderInfoMapper.selectById(orderId);
+        if(orderInfo == null){
+            return OrderStatus.NULL_ORDER.getStatus();
+        }
+
+        return orderInfo.getStatus();
     }
 }
