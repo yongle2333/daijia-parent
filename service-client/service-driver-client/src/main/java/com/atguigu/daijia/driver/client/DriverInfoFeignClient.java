@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+import java.util.Map;
+
 @FeignClient(value = "service-driver")
 public interface DriverInfoFeignClient {
 
@@ -39,6 +42,10 @@ public interface DriverInfoFeignClient {
     //获取司机的个性化设置信息
     @GetMapping("/driver/info/getDriverSet/{driverId}")
     Result<DriverSet> getDriverSet(@PathVariable Long driverId);
+
+    //批量获取司机个性设置信息***
+    @PostMapping("/driver/info/batchGetDriverSets")
+    Result<Map<Long,DriverSet>> batchGetDriverSets(@RequestBody List<Long> driverIds);
 
 }
 

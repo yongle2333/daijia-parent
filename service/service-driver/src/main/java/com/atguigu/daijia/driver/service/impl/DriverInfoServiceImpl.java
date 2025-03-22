@@ -36,9 +36,14 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -213,6 +218,29 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         wrapper.eq(DriverSet::getDriverId,driverId);
         DriverSet driverSet = driverSetMapper.selectOne(wrapper);
         return driverSet;
+    }
+
+
+    //批量获取司机个性化设置信息
+    @Override
+    public Map<Long, DriverSet> batchGetDriverSets(List<Long> driverIds) {
+        if(CollectionUtils.isEmpty(driverIds)){
+            return Collections.EMPTY_MAP;
+        }
+        // 使用 MyBatis-Plus 的 in 查询批量获取数据
+        LambdaQueryWrapper<DriverSet> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(DriverSet::getDriverId,driverIds);
+        List<DriverSet> driverSetList = driverSetMapper.selectList(wrapper);
+
+        // 转换为 Map<driverId, DriverSet> 结构，便于快速查找
+        return driverSetList.stream()
+                .collect(Collectors.toMap(
+                        DriverSet::getDriverId,
+                        driverSet -> driverSet,
+                        //处理重复键
+                        (existing, replacement) -> existing
+                ));
+
     }
 }
 

@@ -8,6 +8,9 @@ import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+import java.util.Map;
+
 public interface DriverInfoService extends IService<DriverInfo> {
 
     //微信小程序授权登录
@@ -23,4 +26,6 @@ public interface DriverInfoService extends IService<DriverInfo> {
     boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm);
 
     DriverSet getDriverSet(Long driverId);
+
+    Map<Long, DriverSet> batchGetDriverSets(List<Long> driverIds);
 }

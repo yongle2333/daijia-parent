@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Tag(name = "司机API接口管理")
 @RestController
@@ -74,6 +77,15 @@ public class DriverInfoController {
         return Result.ok(driverInfoService.getDriverSet(driverId));
 
     }
+
+
+    @Operation(summary = "批量获取司机的个性化设置信息")
+    @PostMapping("/batchGetDriverSets")
+    public Result<Map<Long,DriverSet>> batchGetDriverSets(@RequestBody List<Long> driverIds){
+        return Result.ok(driverInfoService.batchGetDriverSets(driverIds));
+    }
+
+
 
 
 }
