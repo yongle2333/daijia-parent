@@ -4,7 +4,9 @@ import com.alibaba.nacos.plugin.auth.constant.Constants;
 import com.atguigu.daijia.common.login.GuiguLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.util.AuthContextHolder;
+import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.LocationService;
+import com.atguigu.daijia.model.entity.driver.DriverSet;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +29,7 @@ public class LocationController {
     private final LocationService locationService;
 
 
+
     @Operation(summary = "开启接单服务：更新司机经纬度位置")
     @GuiguLogin
     @PostMapping("/updateDriverLocation")
@@ -36,6 +39,8 @@ public class LocationController {
         return Result.ok(locationService.updateDriverLocation(updateDriverLocationForm));
 
     }
+
+
 
 
 

@@ -54,6 +54,7 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
     private final CosService cosService;
     private final TencentCloudProperties tencentCloudProperties;
 
+
     //微信小程序授权登录
     @Override
     public Long login(String code) {
@@ -202,6 +203,16 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
             return false;
         }
         return true;
+    }
+
+
+    //获取司机个性化设置信息
+    @Override
+    public DriverSet getDriverSet(Long driverId) {
+        LambdaQueryWrapper<DriverSet> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DriverSet::getDriverId,driverId);
+        DriverSet driverSet = driverSetMapper.selectOne(wrapper);
+        return driverSet;
     }
 }
 
