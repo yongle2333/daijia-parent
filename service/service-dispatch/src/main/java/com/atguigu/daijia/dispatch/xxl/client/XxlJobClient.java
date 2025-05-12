@@ -153,6 +153,7 @@ public class XxlJobClient {
         log.info("增加并开始执行xxl任务失败:{}", response.getBody().toJSONString());
         throw new GuiguException(ResultCodeEnum.DATA_ERROR);
 
+
     }
 
 }
