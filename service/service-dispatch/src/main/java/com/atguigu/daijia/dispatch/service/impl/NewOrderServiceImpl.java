@@ -21,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -122,7 +124,7 @@ public class NewOrderServiceImpl implements NewOrderService {
                 newOrderDataVo.setDistance(driver.getDistance());
                 newOrderDataVo.setCreateTime(newOrderTaskVo.getCreateTime());
 
-                //新订单保存在司机的临时队列中
+                //新订单保存在司机的****临时队列中***
                 String key = RedisConstant.DRIVER_ORDER_TEMP_LIST+newOrderDataVo.getOrderId();
                 redisTemplate.opsForList().leftPush(key,JSON.toJSONString(newOrderDataVo));
 
@@ -133,5 +135,32 @@ public class NewOrderServiceImpl implements NewOrderService {
 
         });
 
+    }
+
+
+    //查询司机新订单数据
+    @Override
+    public List<NewOrderDataVo> findNewOrderQueueData(Long driverId) {
+        List<NewOrderDataVo> list = new ArrayList<>();
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST+driverId;
+        Long size = redisTemplate.opsForList().size(key);
+        if(size > 0){
+            for (int i = 0; i < size; i++) {
+                String content = (String) redisTemplate.opsForList().leftPop(key);
+                NewOrderDataVo newOrderDataVo = JSON.parseObject(content, NewOrderDataVo.class);
+                list.add(newOrderDataVo);
+            }
+        }
+
+        return list;
+    }
+
+
+    //清空新订单队列数据
+    @Override
+    public Boolean clearNewOrderQueueData(Long driverId) {
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        redisTemplate.delete(key);
+        return true;
     }
 }
