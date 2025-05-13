@@ -43,6 +43,7 @@ public enum ResultCodeEnum {
     IDCARD_DATA_ERROR(666,"身份证认证失败"),
     AUTH_ERROR( 217, "认证通过后才可以开启代驾服务"),
     FACE_ERROR( 250, "当日未进行人脸识别"),
+    FACE_DATA_ERROR(252,"人脸验证失败"),
 
     COUPON_EXPIRE( 250, "优惠券已过期"),
     COUPON_LESS( 250, "优惠券库存不足"),

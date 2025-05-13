@@ -47,6 +47,15 @@ public interface DriverInfoFeignClient {
     @PostMapping("/driver/info/batchGetDriverSets")
     Result<Map<Long,DriverSet>> batchGetDriverSets(@RequestBody List<Long> driverIds);
 
+
+    //判断司机当日是否进行过人脸识别
+    @GetMapping("/driver/info/isFaceRecognition/{driverId}")
+    Result<Boolean> isFaceRecognition(@PathVariable("driverId") Long driverId);
+
+
+    //验证司机人脸
+    @PostMapping("/driver/info/verifyDriverFace")
+    Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm);
 }
 
 

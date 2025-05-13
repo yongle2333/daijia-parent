@@ -96,7 +96,7 @@ public class NewOrderServiceImpl implements NewOrderService {
         //远程调用,获取司机集合列表
         List<NearByDriverVo> nearByDriverVoList = locationFeignClient.searchNearByDriver(searchNearByDriverForm).getData();
 
-        //遍历司机集合，得到每个司机，并为每个司机创建临时队列，存储新的订单信息
+        //遍历司机集合，得到每个司机，并为每个司机创建临时队列，存储新的订单信息 ***有null****
         nearByDriverVoList.forEach(driver -> {
             //Redis 的set类型
             //根据订单id生成key

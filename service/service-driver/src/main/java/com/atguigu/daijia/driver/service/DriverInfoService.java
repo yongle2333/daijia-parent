@@ -28,4 +28,9 @@ public interface DriverInfoService extends IService<DriverInfo> {
     DriverSet getDriverSet(Long driverId);
 
     Map<Long, DriverSet> batchGetDriverSets(List<Long> driverIds);
+
+    Boolean isFaceRecognition(Long driverId);
+
+    Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm);
+
 }

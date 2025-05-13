@@ -42,7 +42,9 @@ public class LocationServiceImpl implements LocationService {
         redisTemplate.opsForGeo().add(RedisConstant.DRIVER_GEO_LOCATION,point,
                 updateDriverLocationForm.getDriverId().toString());
         return true;
+
     }
+
 
 
 
