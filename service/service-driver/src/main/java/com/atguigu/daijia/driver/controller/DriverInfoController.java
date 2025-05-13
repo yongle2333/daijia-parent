@@ -103,6 +103,16 @@ public class DriverInfoController {
     }
 
 
+    @Operation(summary = "更新订单状态")
+    @GetMapping("/updateServiceStatus/{driverId}/{status}")
+    public Result<Boolean> updateServiceStatus(@PathVariable Long driverId,@PathVariable Integer status){
+
+        return Result.ok(driverInfoService.updateServiceStatus(driverId,status));
+    }
+
+
+
+
 
 
 

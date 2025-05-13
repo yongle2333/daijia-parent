@@ -88,10 +88,29 @@ public class DriverController {
 
 
     @Operation(summary = "验证司机人脸")
+    @GuiguLogin
     @PostMapping("/verifyDriverFace")
     public Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm){
 
         return Result.ok(driverService.verifyDriverFace(driverFaceModelForm));
+    }
+
+
+    @Operation(summary = "开始接单服务")
+    @GuiguLogin
+    @GetMapping("/startService")
+    public Result<Boolean> startService(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.startService(driverId));
+    }
+
+
+    @Operation(summary = "停止接单服务")
+    @GuiguLogin
+    @GetMapping("/stopService")
+    public Result<Boolean> stopService(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.stopService(driverId));
     }
 
 }

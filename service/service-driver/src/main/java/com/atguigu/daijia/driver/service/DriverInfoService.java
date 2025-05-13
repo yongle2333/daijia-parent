@@ -33,4 +33,5 @@ public interface DriverInfoService extends IService<DriverInfo> {
 
     Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm);
 
+    Boolean updateServiceStatus(Long driverId, Integer status);
 }
